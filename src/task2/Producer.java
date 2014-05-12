@@ -13,7 +13,8 @@ public class Producer extends Thread {
 
 	public void run() {
 		System.out.println("Starting Producer Thread with value: "+Integer.toString(num));
-		while (true) {
+		//while (true) {
+		for (int i = 0; i<5; i++){
 			try {
 				buffer.write(num);
 			} catch (InterruptedException e) {
