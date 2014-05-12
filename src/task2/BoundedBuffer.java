@@ -1,38 +1,47 @@
 package task2;
 
+import java.util.Arrays;
+
 public class BoundedBuffer {
 
-	BinarySemaphore BS = new BinarySemaphore(0);
-	GeneralSemaphore GS1 = new GeneralSemaphore(0);
-	GeneralSemaphore GS2 = new GeneralSemaphore(0);
-	
-	private int[] buffer;
+	public int[] buffer;
 	int size;
-	int read = 1;
+	int read = 0;
 	int write = 0;
+	BinarySemaphore Mutex;
+	GeneralSemaphore EmptySpaces;
+	GeneralSemaphore FullSpaces;
 
 	public BoundedBuffer(int size){
 		this.size = size;
 		buffer = new int[size];
+		Mutex = new BinarySemaphore(1);
+		EmptySpaces = new GeneralSemaphore(size);
+		FullSpaces = new GeneralSemaphore(0);
 	}
+	
 	public void write(int value) throws InterruptedException{
-		GS1.waitSignal();
-		BS.waitSignal();
+		
+		EmptySpaces.semWait();
+		Mutex.semWait();
 		buffer[write] = value;
-		write = (write++ % size);
-		BS.notifySignal();
-		GS1.notifySignal();
+		write = (write + 1) % size;
+		System.out.println("Wrote "+value + Arrays.toString(buffer) + "write:"+write);
+		Mutex.semSignal();
+		FullSpaces.semSignal();
 	}
 	
 	public int read() throws InterruptedException{
-		GS1.waitSignal();
-		BS.waitSignal();
-		int value = buffer[read];
-		read = (read++ % size);
-		BS.notifySignal();
-		GS1.notifySignal();
-		buffer[read] = 0;
-		return value;
 		
+		FullSpaces.semWait();
+		Mutex.semWait();
+		int value = buffer[read];
+		buffer[read] = 0;
+		read = (read + 1 ) % size;
+		System.out.println("Read " + Integer.toString(value) + Arrays.toString(buffer)+"read:"+read);
+		Mutex.semSignal();
+		EmptySpaces.semSignal();
+		
+		return value;
 	}
 }

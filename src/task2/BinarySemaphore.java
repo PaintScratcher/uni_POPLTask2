@@ -7,14 +7,14 @@ public class BinarySemaphore {
 	    locked = (initial == 0);
 	  }
 	 
-	  public synchronized void waitSignal() throws InterruptedException {
+	  public synchronized void semWait() throws InterruptedException {
 	    while (locked) {
 	      wait();
 	    }
 	    locked = true;
 	  }
 	 
-	  public synchronized void notifySignal() {
+	  public synchronized void semSignal() {
 	    if (locked) {
 	      notify();
 	    }
