@@ -1,4 +1,4 @@
-package task2;
+package task3;
 
 public class Consumer extends Thread {
 	private BoundedBuffer buffer;

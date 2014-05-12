@@ -1,4 +1,4 @@
-package task2;
+package task3;
 
 public class BinarySemaphore {
 	  private boolean locked = false;
