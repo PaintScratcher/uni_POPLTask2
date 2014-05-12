@@ -26,7 +26,7 @@ public class BoundedBuffer {
 		Mutex.semWait();
 		buffer[write] = value;
 		write = (write + 1) % size;
-		System.out.println("Wrote "+value + Arrays.toString(buffer) + "write:"+write);
+		//System.out.println("Wrote "+value + Arrays.toString(buffer) + "write:"+write);
 		Mutex.semSignal();
 		FullSpaces.semSignal();
 	}
@@ -38,7 +38,7 @@ public class BoundedBuffer {
 		int value = buffer[read];
 		buffer[read] = 0;
 		read = (read + 1 ) % size;
-		System.out.println("Read " + Integer.toString(value) + Arrays.toString(buffer)+"read:"+read);
+		//System.out.println("Read " + Integer.toString(value) + Arrays.toString(buffer)+"read:"+read);
 		Mutex.semSignal();
 		EmptySpaces.semSignal();
 		
