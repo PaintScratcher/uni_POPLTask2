@@ -5,12 +5,15 @@ public class GeneralSemaphore {
 	public GeneralSemaphore (int initial) {
 		value = initial;
 	}
-	synchronized public void semSignal() {
-		++value;
-		notify();
-	}
-	synchronized public void semWait() throws InterruptedException {
+	
+	synchronized public void semWait() throws InterruptedException { //The Wait implementation
 		while (value == 0) wait();
 		--value;
 	}
+	
+	synchronized public void semSignal() { // The signal implementation
+		++value;
+		notify();
+	}
+	
 }
