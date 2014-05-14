@@ -11,8 +11,7 @@ public class BoundedBuffer {
 	int elements = 0;
 	int waitingThreads = 0;
 	BinarySemaphore lock = new BinarySemaphore(false);
-	BinarySemaphore hold = new BinarySemaphore(false);
-	BinarySemaphore alive = new BinarySemaphore(false);
+	BinarySemaphore waiting = new BinarySemaphore(true);
 
 	public BoundedBuffer(int size){
 		this.size = size;
@@ -21,46 +20,55 @@ public class BoundedBuffer {
 	
 	public void write(int value) throws InterruptedException{
 		lock.semWait();
+		
 		while(elements == size){
 			//Implementing Wait()
 			waitingThreads++;
 			lock.semSignal();
-			hold.semWait();
-			alive.semSignal();
+			waiting.semWait();
 			lock.semWait();
+			waitingThreads--;
+			waiting.semSignal();
 		}
+		
 		buffer[write] = value;
 		write = (write + 1) % size;
 		elements ++;
 		
 		//Implementing notifyAll()
 		for(int i = 0; i<waitingThreads;i++){
-			hold.semSignal();
-			alive.semWait();
+			waiting.semSignal();
 			waitingThreads--;
 		}
 		System.out.println("Wrote "+value + Arrays.toString(buffer) + "write:"+write);
+		lock.semSignal();
+		
 	}
 	
 	public int read() throws InterruptedException{
+		lock.semWait();
 		while(elements == 0){
 			//Implementing Wait()
 			waitingThreads++;
 			lock.semSignal();
-			hold.semWait();
-			alive.semSignal();
+			waiting.semWait();
 			lock.semWait();
+			waitingThreads--;
+			waiting.semSignal();
 		}
+		
+		
 		int value = buffer[read];
 		buffer[read] = 0;
 		read = (read + 1 ) % size;
 		elements --;
 		for(int i = 0; i<waitingThreads;i++){
-			hold.semSignal();
-			alive.semWait();
+			waiting.semSignal();
 			waitingThreads--;
 		}
 		System.out.println("Read " + Integer.toString(value) + Arrays.toString(buffer)+"read:"+read);
+		lock.semSignal();
+		
 		
 		return value;
 	}

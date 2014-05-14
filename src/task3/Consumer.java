@@ -9,6 +9,7 @@ public class Consumer extends Thread {
 
 	public void run() {
 		System.out.println("Starting Consumer Thread");
+		//while(true){
 		for (int i = 0; i<5; i++){
 			try {
 				int num = buffer.read();
