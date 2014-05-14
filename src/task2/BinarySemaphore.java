@@ -1,10 +1,10 @@
 package task2;
 
 public class BinarySemaphore {
-	  private boolean locked = false; 
+	  private boolean locked;
 	 
-	  BinarySemaphore(boolean initial) { //Take the value given and use it to initially lock the semaphore
-	    locked = initial;
+	  BinarySemaphore(boolean givenLock) { //Take the value given and use it to initially lock the semaphore
+	    locked = givenLock;
 	  }
 	 
 	  public synchronized void semWait() throws InterruptedException { //The Wait implementation
